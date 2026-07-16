@@ -181,6 +181,7 @@
     }
 
     input[type="text"],
+    input[type="email"],
     input[type="tel"],
     input[type="date"],
     input[type="time"],
@@ -466,6 +467,11 @@
               </div>
             </div>
 
+            <div class="field">
+              <label class="required" for="emailAddress">Email address</label>
+              <input type="email" id="emailAddress" name="emailAddress" autocomplete="email" maxlength="150" placeholder="e.g. customer@example.com" required />
+            </div>
+
             <div class="grid-2">
               <div class="field">
                 <label class="required" for="visitDate">Date visited</label>
@@ -627,27 +633,6 @@
               </div>
             </fieldset>
 
-            <fieldset data-required-group="rollbackSource">
-              <legend>How did you hear about Rollback Days?</legend>
-              <div class="choice-grid four">
-                <div class="choice">
-                  <input type="radio" id="sourceEmployee" name="rollbackSource" value="DOMO employee" />
-                  <label for="sourceEmployee">Employee</label>
-                </div>
-                <div class="choice">
-                  <input type="radio" id="sourceSignage" name="rollbackSource" value="Station signage" />
-                  <label for="sourceSignage">Station signage</label>
-                </div>
-                <div class="choice">
-                  <input type="radio" id="sourceSocial" name="rollbackSource" value="Social media or online" />
-                  <label for="sourceSocial">Online/social</label>
-                </div>
-                <div class="choice">
-                  <input type="radio" id="sourceOther" name="rollbackSource" value="Other" />
-                  <label for="sourceOther">Other</label>
-                </div>
-              </div>
-            </fieldset>
           </section>
 
           <section class="section">
@@ -700,7 +685,7 @@
 
           <p class="privacy">
             Responses are stored on this device in the website's browser storage.
-            Customer names and phone numbers are collected for survey follow-up and must be handled securely.
+            Customer names, phone numbers, and email addresses are collected for survey follow-up and must be handled securely.
           </p>
 
           <div class="admin-tools">
@@ -741,6 +726,7 @@
     const requiredNames = [
       "customerName",
       "phoneNumber",
+      "emailAddress",
       "visitDate",
       "visitTime",
       "location",
@@ -848,6 +834,15 @@
         return;
       }
 
+      const emailInput = document.getElementById("emailAddress");
+      if (!emailInput.validity.valid) {
+        emailInput.style.borderColor = "#b42318";
+        formError.textContent = "Please enter a valid email address.";
+        formError.style.display = "block";
+        emailInput.focus();
+        return;
+      }
+
       const phoneInput = document.getElementById("phoneNumber");
       const phoneDigits = phoneInput.value.replace(/\D/g, "");
       if (phoneDigits.length < 10) {
@@ -864,6 +859,7 @@
         submittedAt: new Date().toISOString(),
         customerName: data.get("customerName"),
         phoneNumber: data.get("phoneNumber"),
+        emailAddress: data.get("emailAddress"),
         visitDate: data.get("visitDate"),
         visitTime: data.get("visitTime"),
         location: data.get("location"),
@@ -873,7 +869,6 @@
         windscreen: data.get("windscreen"),
         offers: data.get("offers"),
         rollbackAwareness: data.get("rollbackAwareness"),
-        rollbackSource: data.get("rollbackSource") || "",
         recommend: data.get("recommend"),
         comments: data.get("comments") || ""
       };
